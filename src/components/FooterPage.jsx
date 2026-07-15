@@ -12,27 +12,27 @@ export default function FooterPage() {
             </div>
             <div className='flex flex-col gap-3'>
               <h2 className='font-semibold'>Explorar</h2>
-              <Link to={'/'}>Ver cursos</Link>
+              <Link to={'/courses'}>Ver cursos</Link>
               <Link to={'/'}>Laboratorios</Link>
-              <Link to={'/'}>Leer blog</Link>
-              <Link to={'/'}>Contacto</Link>
-              <Link to={'/'}>Aprender</Link>
+              {/* <Link to={'/'}>Leer blog</Link>
+              <Link to={'/'}>Contacto</Link> */}
+              <Link to={'/courses'}>Aprender</Link>
             </div>
-            <div className='flex flex-col gap-3'>
+            {/* <div className='flex flex-col gap-3'>
               <h2 className='font-semibold'>Recursos</h2>
               <Link to={'/'}>Matemáticas</Link>
               <Link to={'/'}>Programación</Link>
               <Link to={'/'}>Diagramas</Link>
               <Link to={'/'}>Animaciones</Link>
-            </div>
-            <div className='flex flex-col gap-3'>
-              <h2 className='Comunidad'></h2>
+            </div> */}
+            {/* <div className='flex flex-col gap-3'>
+              <h2 className='font-semibold'>Comunidad</h2>
               <Link to={'/'}>Foro activo</Link>
               <Link to={'/'}>Eventos</Link>
               <Link to={'/'}>Webinars</Link>
               <Link to={'/'}>Certificados</Link>
               <Link to={'/'}>Soporte</Link>
-            </div>
+            </div> */}
             <div className='flex flex-col gap-3'>
               <h2 className='font-semibold'>Suscribirse</h2>
               <p className='text-sm text-zinc-600'>Recibe actualizaciones sobre nuevos cursos y características cada semana.</p>

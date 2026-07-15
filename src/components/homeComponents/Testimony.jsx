@@ -45,22 +45,22 @@ export default function Testimony() {
             <div className='flex justify-center mb-2 text-yellow-500'>{'★'.repeat(testimonies[index].rating)}</div>
             <p className='italic mb-4 text-zinc-600'>"{testimonies[index].text}"</p>
             <h3 className='font-bold'>{testimonies[index].name}</h3>
-            <span className='text-sm text-gray-500'>{testimonies[index].role}</span>
+            <span className='text-sm text-zinc-500'>{testimonies[index].role}</span>
           </div>
           <div className='flex items-center gap-4'>
-            <button onClick={prev} className='p-2 border border-zinc-200 rounded-lg hover:scale-95 transition-all'><i className='fi fi-rr-angle-left flex items-center justify-center'></i></button>
+            <button onClick={prev} className='p-2 border border-zinc-200 rounded-lg hover:cursor-pointer hover:scale-95 transition-all'><i className='fi fi-rr-angle-left flex items-center justify-center'></i></button>
             <div className='flex gap-2'>
               {testimonies.map((_, i) => (
                 <span 
                   key={i} 
                   onClick={() => setIndex(i)} 
                   className={`w-3 h-3 rounded-full cursor-pointer ${
-                    i === index ? 'bg-black' : 'bg-gray-300'
+                    i === index ? 'bg-black' : 'bg-zinc-300'
                   }`}
                 />
               ))}
             </div>
-            <button onClick={next} className='p-2 border border-zinc-200 rounded-lg hover:scale-95 transition-all'><i className='fi fi-rr-angle-right flex items-center justify-center'></i></button>
+            <button onClick={next} className='p-2 border border-zinc-200 rounded-lg hover:cursor-pointer hover:scale-95 transition-all'><i className='fi fi-rr-angle-right flex items-center justify-center'></i></button>
           </div>
         </div>
       </section>

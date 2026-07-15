@@ -9,14 +9,14 @@ export default function Questions() {
       question: '¿Qué nivel de experiencia necesito?',
       answer: 'Zynthera está diseñado para todos, desde completos principiantes hasta desarrolladores experimentados. Los cursos se adaptan a tu ritmo.'
     },
-    {
-      question: '¿Puedo descargar el contenido?',
-      answer: 'Ofrecemos guías en PDF y notas descargables. Sin embargo, los laboratorios requieren acceso en linea.'
-    },
-    {
-      question: '¿Hay certificados disponibles?',
-      answer: 'Sí. Al completar un curso recibes un certificado verificable que puedes compartir.'
-    },
+    // {
+    //   question: '¿Puedo descargar el contenido?',
+    //   answer: 'Ofrecemos guías en PDF y notas descargables. Sin embargo, los laboratorios requieren acceso en linea.'
+    // },
+    // {
+    //   question: '¿Hay certificados disponibles?',
+    //   answer: 'Sí. Al completar un curso recibes un certificado verificable que puedes compartir.'
+    // },
     {
       question: '¿Cuánto tiempo toma un curso?',
       answer: 'Depende del curso, Algunos toman 2-3 horas, otros más avanzados pueden tomar más tiempo.'

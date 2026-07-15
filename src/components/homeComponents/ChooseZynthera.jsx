@@ -21,12 +21,12 @@ export default function ChooseZynthera() {
               <h1 className='font-bold text-fu text-sm'>Comprensión profunda</h1>
               <h1 className='text-fu text-3xl font-semibold leading-tight'>Entiende el razonamiento detrás del código</h1>
               <p className='text-fu text-sm text-zinc-600'>Los métodos visuales penetran donde las palabras fallan. Ves cómo funciona, no solo lees sobre ello.</p>
-              <div className='mt-auto flex gap-3 items-center'>
+              {/* <div className='mt-auto flex gap-3 items-center'>
                 <Link to={'/'}>
                   <button className='text-fu border-2 border-zinc-300 px-5 py-1 rounded-lg hover:cursor-pointer hover:scale-95 transition-all'>Aprender</button>
                 </Link>
                 <Link to={'/'} className='flex justify-center items-center gap-2 hover:scale-95 transition-all text-fu'>Más <i className='fi fi-rr-angle-right flex justify-center items-center text-xs'></i></Link>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className='rounded-lg overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md transition-all'>
@@ -39,12 +39,12 @@ export default function ChooseZynthera() {
               <h1 className='font-bold text-fu text-sm'>Progreso medible</h1>
               <h1 className='text-fu text-3xl font-semibold leading-tight'>Avanza a tu propio ritmo sin presiones</h1>
               <p className='text-fu text-sm text-zinc-600'>Cada laboratorio completado es una victoria. Construyes confianza con cada paso, sin competencia artificial.</p>
-              <div className='mt-auto flex gap-3 items-center'>
+              {/* <div className='mt-auto flex gap-3 items-center'>
                 <Link to={'/'}>
                   <button className='text-fu border-2 border-zinc-300 px-5 py-1 rounded-lg hover:cursor-pointer hover:scale-95 transition-all'>Explorar</button>
                 </Link>
                 <Link to={'/'} className='flex justify-center items-center gap-2 hover:scale-95 transition-all text-fu'>Más <i className='fi fi-rr-angle-right flex justify-center items-center text-xs'></i></Link>
-              </div>
+              </div> */}
             </div>
           </div>
           <div className='rounded-lg overflow-hidden flex flex-col h-full shadow-sm hover:shadow-md transition-all'>
@@ -57,12 +57,12 @@ export default function ChooseZynthera() {
               <h1 className='font-bold text-fu text-sm'>Aprendizaje inmersivo</h1>
               <h1 className='text-fu text-3xl font-semibold leading-tight'>Experimenta la tecnología en tiempo real</h1>
               <p className='text-fu text-sm text-zinc-600'>Sumérgete en simulaciones interactivas donde puedes probar, fallar y aprender sin límites. </p>
-              <div className='mt-auto flex gap-3 items-center'>
+              {/* <div className='mt-auto flex gap-3 items-center'>
                 <Link to={'/'}>
                   <button className='text-fu border-2 border-zinc-300 px-5 py-1 rounded-lg hover:cursor-pointer hover:scale-95 transition-all'>Probar ahora</button>
                 </Link>
                 <Link to={'/'} className='flex justify-center items-center gap-2 hover:scale-95 transition-all text-fu'>Más <i className='fi fi-rr-angle-right flex justify-center items-center text-xs'></i></Link>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>

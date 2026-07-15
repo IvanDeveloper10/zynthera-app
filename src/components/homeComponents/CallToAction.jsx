@@ -1,7 +1,11 @@
-import { Fragment } from 'react';
+import { Fragment, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';
 
 export default function CallToAction() {
+  
+  const { user } = useContext(AuthContext);
+
   return (
     <Fragment>
       <section className='w-full flex justify-center px-5 mt-20 text-fu'>
@@ -10,10 +14,12 @@ export default function CallToAction() {
             <h1 className='font-bold text-4xl sm:text-5xl lg:text-6xl'>Comienza tu viaje hoy</h1>
             <p className='text-zinc-600'>Acceso inmediato a cursos, laboratorios y recursos que transformarán tu comprensión de la tecnología.</p>
             <div className='flex flex-wrap gap-3'>
-              <Link to={'/'}>
-                <button className='bg-zinc-800 text-white px-5 py-2 rounded-lg hover:scale-95 transition-all'>Registrarse</button>
-              </Link>
-              <button className='px-5 py-2 hover:scale-95 transition-all'>Ver demo</button>
+              {!user && (
+                <Link to={'/register'}>
+                  <button className='bg-zinc-800 text-white px-5 py-2 rounded-lg hover:scale-95 transition-all'>Registrarse</button>
+                </Link>
+              )}
+              {/* <button className='px-5 py-2 hover:scale-95 transition-all'>Ver demo</button> */}
             </div>
           </div>
           <div className='w-full lg:w-1/2'>
@@ -25,7 +31,7 @@ export default function CallToAction() {
           </div>
         </div>
       </section>
-      <section className='w-full flex justify-center px-5 mt-20 text-fu'>
+      {/* <section className='w-full flex justify-center px-5 mt-20 text-fu'>
         <div className='w-full max-w-7xl flex flex-col lg:flex-row items-center gap-10'>
           <div className='w-full lg:w-1/2 order-1 lg:order-0'>
             <img 
@@ -47,7 +53,7 @@ export default function CallToAction() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
     </Fragment>
   );
 }

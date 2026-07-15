@@ -26,10 +26,10 @@ export default function HowLearn() {
             </video>
             <h1 className='text-fu text-3xl font-bold'>Observa en tiempo real</h1>
             <p className='text-fu'>Las animaciones dinámicas muestran exactamente qué sucede en cada línea.</p>
-            <span className='flex justify-center items-center gap-2 mt-10 text-fu'>
+            {/* <span className='flex justify-center items-center gap-2 mt-10 text-fu'>
               <button className='px-4 border-2 rounded-lg py-1 border-zinc-200 hover:scale-95 hover:cursor-pointer transition-all'>Comenzar</button>
               <button className='flex justify-center items-center gap-2 hover:scale-95 hover:cursor-pointer transition-all'>Ver demo <i className='fi fi-rr-angle-right flex justify-center items-center text-xs'></i></button>
-            </span>
+            </span> */}
           </div>
 
           <div className='w-96 flex flex-col justify-center items-center text-center'>
