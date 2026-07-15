@@ -5,7 +5,7 @@ import Login from './pages/Login';
 import Courses from './pages/Courses';
 import Laboratories from './pages/Laboratories';
 import Play from './pages/Play';
-import LearnAlgorithms from './pages/Learn/algorithms/LearnAlgorithms';
+import LearnAlgorithms from './pages/learn/algorithms/LearnAlgorithms';
 import PageLessonAlgorithms from './pages/learn/algorithms/lessons/PageLessonAlgorithms';
 import AlgorithmsLab from './components/laboratories/AlgorithmsLab';
 
