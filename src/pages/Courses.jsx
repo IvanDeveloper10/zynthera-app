@@ -17,45 +17,45 @@ const coursesData = [
     modules: 8,
     route: '/courses/learn/learn-algorithms'
   },
-  {
-    id: 'logica-programacion',
-    title: 'Lógica De Programación',
-    description:
-      'Aprende a pensar como programador desde cero con ejercicios prácticos.',
-    category: 'programacion',
-    level: 'Principiante',
-    duration: '18 horas',
-    students: 37,
-    image: 'https://cdn.hackclub.com/019e24c5-1c5f-7245-b830-86c60745aaa5/image-logic.jpg',
-    modules: 6,
-    route: '/courses/learn/learn-logic-programming'
-  },
-  {
-    id: 'logica-matematica',
-    title: 'Lógica Matemática',
-    description:
-      'Fortalece el razonamiento matemático aplicado a la computación.',
-    category: 'ciencias',
-    level: 'Avanzado',
-    duration: '30 horas',
-    students: 22,
-    image: 'https://cdn.hackclub.com/019e24c5-18e6-7929-a64a-d43deef11bf7/image-matematica.jpg',
-    modules: 10,
-    route: '/courses/learn/learn-logic-math'
-  },
-  {
-    id: 'teoria-sistemas',
-    title: 'Teoría General De Sistemas',
-    description:
-      'Comprende sistemas complejos y pensamiento sistémico aplicado.',
-    category: 'ciencias',
-    level: 'Intermedio',
-    duration: '20 horas',
-    students: 35,
-    image: 'https://cdn.hackclub.com/019e24c5-15ee-7197-a678-eb20134a3008/image-sistemas.jpg',
-    modules: 7,
-    route: '/courses/learn/learn-systems-theory'
-  }
+  // {
+  //   id: 'logica-programacion',
+  //   title: 'Lógica De Programación',
+  //   description:
+  //     'Aprende a pensar como programador desde cero con ejercicios prácticos.',
+  //   category: 'programacion',
+  //   level: 'Principiante',
+  //   duration: '18 horas',
+  //   students: 37,
+  //   image: 'https://cdn.hackclub.com/019e24c5-1c5f-7245-b830-86c60745aaa5/image-logic.jpg',
+  //   modules: 6,
+  //   route: '/courses/learn/learn-logic-programming'
+  // },
+  // {
+  //   id: 'logica-matematica',
+  //   title: 'Lógica Matemática',
+  //   description:
+  //     'Fortalece el razonamiento matemático aplicado a la computación.',
+  //   category: 'ciencias',
+  //   level: 'Avanzado',
+  //   duration: '30 horas',
+  //   students: 22,
+  //   image: 'https://cdn.hackclub.com/019e24c5-18e6-7929-a64a-d43deef11bf7/image-matematica.jpg',
+  //   modules: 10,
+  //   route: '/courses/learn/learn-logic-math'
+  // },
+  // {
+  //   id: 'teoria-sistemas',
+  //   title: 'Teoría General De Sistemas',
+  //   description:
+  //     'Comprende sistemas complejos y pensamiento sistémico aplicado.',
+  //   category: 'ciencias',
+  //   level: 'Intermedio',
+  //   duration: '20 horas',
+  //   students: 35,
+  //   image: 'https://cdn.hackclub.com/019e24c5-15ee-7197-a678-eb20134a3008/image-sistemas.jpg',
+  //   modules: 7,
+  //   route: '/courses/learn/learn-systems-theory'
+  // }
 ];
 
 const categories = [
