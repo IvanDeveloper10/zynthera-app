@@ -1,16 +1,10 @@
-# React + Vite
+# Zynthera - Software Educational
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+<img width="1897" height="925" alt="Captura de pantalla 2026-07-13 153424" src="https://github.com/user-attachments/assets/dacf413a-3b3f-46c4-9f5e-01efab3c85dc" />
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Zynthera is a comprehensive educational software focused on technology-based learning, offering courses, labs, and online games that make learning fun and highly productive.
 
-## React Compiler
+Zynthera is primarily developed with React on the frontend and Firebase on the backend, soon to be migrated to Supabase. It maintains an accessible, clean, and simple design, free of unnecessary clutter. The software includes numerous modules, components, and features typical of software, such as authentication and database connections.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+<img width="1896" height="927" alt="Captura de pantalla 2026-07-13 153415" src="https://github.com/user-attachments/assets/e2b3ab32-4d0a-46ff-a6c9-132c998031cc" />
