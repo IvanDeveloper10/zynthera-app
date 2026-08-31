@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 <img width="1896" height="922" alt="image" src="https://github.com/user-attachments/assets/2e575ba3-2558-43aa-9c87-12695d21505a" />
+=======
+# React + TypeScript + Vite
+>>>>>>> a20de71 (Zynthera v2 finish)
 
 # Zynthera
 
@@ -11,6 +15,7 @@ The idea isn't to simply create another course platform. I want to bring learnin
 
 ## What am I building?
 
+<<<<<<< HEAD
 Zynthera currently has two main types of users:
 
 * **Students:** can access courses, lessons, activities, and other experiences throughout the platform.
@@ -145,3 +150,63 @@ There's still a lot to build, but that's exactly what makes the project interest
 
 **Zynthera**
 *Learning by doing.*
+=======
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
+
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
+
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
+
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
+```
+>>>>>>> a20de71 (Zynthera v2 finish)
