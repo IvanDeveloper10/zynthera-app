@@ -1,17 +1,18 @@
-import { Fragment } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from '../../contexts/authContext'
-import { supabase } from '../../lib/supabase'
-import { toast } from '@/components/ui/toast'
-import { Button } from '@/components/ui/button'
+import { Fragment } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/authContext';
+import { supabase } from '../../lib/supabase';
+import { toast } from '@/components/ui/toast';
+import { Button } from '@/components/ui/button';
 
 export default function Navbar() {
-  const { user, profile, loading } = useAuth()
-  const navigate = useNavigate()
+  const { user, profile, loading } = useAuth();
+  const navigate = useNavigate();
+
   const handleLogout =
     async () => {
       try {
-        const {error } = await supabase.auth.signOut()
+        const {error } = await supabase.auth.signOut();
         if (error) {
           throw error
         }
@@ -19,18 +20,18 @@ export default function Navbar() {
           title: 'Sesión cerrada',
           description: 'Has cerrado sesión correctamente.',
           type: 'success',
-        })
+        });
 
         navigate('/', {
           replace: true,
-        })
+        });
       } catch (error) {
-        console.error('Error al cerrar sesión:', error)
+        console.error('Error al cerrar sesión:', error);
         toast.add({
           title: 'No se pudo cerrar sesión',
           description: 'Ocurrió un error al cerrar tu sesión. Inténtalo nuevamente.',
           type: 'error',
-        })
+        });
       }
     }
   return (

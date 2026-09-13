@@ -12,7 +12,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '../contexts/authContext';
 
 export default function Home() {
-  const { user } = useAuth()
+  const { user } = useAuth();
   return (
     <Fragment>
       <Navbar /> 

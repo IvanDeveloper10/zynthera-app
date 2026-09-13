@@ -12,16 +12,9 @@ interface LoginForm {
 
 export default function Login() {
   const navigate = useNavigate()
-
-  const [form, setForm] =
-    useState<LoginForm>({
-      email: '',
-      password: '',
-    });
-
+  const [form, setForm] = useState<LoginForm>({email: '', password: ''});
   const [showPassword, setShowPassword] = useState(false);
-
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const {name, value } = event.target
