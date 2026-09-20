@@ -6,9 +6,18 @@ interface Course {
   id: string
   title: string
   short_description: string
-  image_url: string | null
+  image_path: string | null
   category: string
   duration: string
+};
+
+type BlockType = 'paragraph' | 'image' | 'example' | 'exercise';
+
+interface LessonBlock {
+  id: string
+  position: number
+  type: BlockType
+  content: unknown
 };
 
 interface Lesson {
@@ -16,18 +25,114 @@ interface Lesson {
   course_id: string
   lesson_number: number
   title: string
-  paragraph_1: string
-  image_1_url: string | null
-  paragraph_2: string
-  image_2_url: string | null
-  example_title: string
-  example_1: string
-  example_2: string
-  example_3: string
-  example_4: string
-  exercise_1: string
-  exercise_2: string
+  lesson_blocks: LessonBlock[] | null
 };
+
+/**
+ * Grupos listos para renderizar. Los `exercise` consecutivos se juntan
+ * en un solo grupo para conservar la sección "Ejercicios" con sus tarjetas.
+ */
+type RenderGroup =
+  | { kind: 'paragraph', key: string, text: string }
+  | { kind: 'image', key: string, path: string, alt: string }
+  | { kind: 'example', key: string, title: string, steps: string[] }
+  | { kind: 'exercises', key: string, items: Array<{ id: string, text: string }> };
+
+const readString = (content: unknown, field: string): string => {
+  if (typeof content !== 'object' || content === null) {
+    return ''
+  }
+
+  const value = (content as Record<string, unknown>)[field]
+
+  return typeof value === 'string' ? value : ''
+}
+
+const readSteps = (content: unknown): string[] => {
+  if (typeof content !== 'object' || content === null) {
+    return []
+  }
+
+  const value = (content as Record<string, unknown>).steps
+
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value.map((step) => (typeof step === 'string' ? step : ''))
+}
+
+const getPublicUrl = (path: string | null) => {
+  if (!path) {
+    return null
+  }
+
+  return supabase.storage
+    .from('course-images')
+    .getPublicUrl(path)
+    .data.publicUrl
+}
+
+const buildRenderGroups = (blocks: LessonBlock[] | null): RenderGroup[] => {
+  if (!blocks) {
+    return []
+  }
+
+  const sorted = [...blocks].sort((a, b) => a.position - b.position)
+  const groups: RenderGroup[] = []
+
+  for (const block of sorted) {
+    if (block.type === 'exercise') {
+      const last = groups[groups.length - 1]
+      const item = {
+        id: block.id,
+        text: readString(block.content, 'text'),
+      }
+
+      if (last && last.kind === 'exercises') {
+        last.items.push(item)
+        continue
+      }
+
+      groups.push({
+        kind: 'exercises',
+        key: `exercises-${block.id}`,
+        items: [item],
+      })
+      continue
+    }
+
+    if (block.type === 'paragraph') {
+      groups.push({
+        kind: 'paragraph',
+        key: block.id,
+        text: readString(block.content, 'text'),
+      })
+      continue
+    }
+
+    if (block.type === 'image') {
+      groups.push({
+        kind: 'image',
+        key: block.id,
+        path: readString(block.content, 'path'),
+        alt: readString(block.content, 'alt'),
+      })
+      continue
+    }
+
+    if (block.type === 'example') {
+      groups.push({
+        kind: 'example',
+        key: block.id,
+        title: readString(block.content, 'title'),
+        steps: readSteps(block.content),
+      })
+    }
+  }
+
+  return groups
+}
 
 export default function CourseDetail() {
   const { courseId } = useParams<{courseId: string}>();
@@ -55,7 +160,7 @@ export default function CourseDetail() {
             id,
             title,
             short_description,
-            image_url,
+            image_path,
             category,
             duration
           `)
@@ -76,17 +181,12 @@ export default function CourseDetail() {
             course_id,
             lesson_number,
             title,
-            paragraph_1,
-            image_1_url,
-            paragraph_2,
-            image_2_url,
-            example_title,
-            example_1,
-            example_2,
-            example_3,
-            example_4,
-            exercise_1,
-            exercise_2
+            lesson_blocks (
+              id,
+              position,
+              type,
+              content
+            )
           `)
           .eq(
             'course_id',
@@ -104,7 +204,7 @@ export default function CourseDetail() {
         }
 
         setCourse(courseData as Course);
-        setLessons((lessonData ?? []) as Lesson[]);
+        setLessons((lessonData ?? []) as unknown as Lesson[]);
         setCurrentLesson(0);
       } catch (error) {
         console.error('Error cargando curso:', error);
@@ -154,14 +254,16 @@ export default function CourseDetail() {
   }
 
   const lesson = lessons[currentLesson];
+  const lessonGroups = lesson ? buildRenderGroups(lesson.lesson_blocks) : [];
+  const courseImageUrl = getPublicUrl(course.image_path);
 
   return (
     <Fragment>
       <main className='min-h-screen bg-zinc-50'>
         <section className='relative h-[320] overflow-hidden sm:h-[420]'>
-          {course.image_url ? (
+          {courseImageUrl ? (
             <img
-              src={course.image_url}
+              src={courseImageUrl}
               alt={course.title}
               className='absolute inset-0 h-full w-full object-cover'
             />
@@ -241,88 +343,101 @@ export default function CourseDetail() {
                     </h2>
                   </div>
                   <div className='space-y-10'>
-                    <div>
-                      <p className='text-base leading-8 text-zinc-700 sm:text-lg'>
-                        {lesson.paragraph_1}
-                      </p>
-                    </div>
-                    {lesson.image_1_url && (
-                      <div className='overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50'>
-                        <img
-                          src={lesson.image_1_url}
-                          alt={`Imagen de ${lesson.title}`}
-                          className='max-h-[600] w-full object-cover'
-                        />
-                      </div>
-                    )}
-                    <div>
-                      <p className='text-base leading-8 text-zinc-700 sm:text-lg'>
-                        {lesson.paragraph_2}
-                      </p>
-                    </div>
-                    {lesson.image_2_url && (
-                      <div className='overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50'>
-                        <img
-                          src={lesson.image_2_url}
-                          alt={`Imagen complementaria de ${lesson.title}`}
-                          className='max-h-[600] w-full object-cover'
-                        />
-                      </div>
-                    )}
-                    <section className='rounded-2xl bg-purple-50 p-6 sm:p-8'>
-                      <div className='flex items-start gap-3'>
-                        <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100'>
-                          <i className='fi fi-rr-lightbulb-on flex items-center text-purple-600' />
-                        </div>
-                        <div>
-                          <h3 className='text-xl font-bold text-purple-950'>
-                            {lesson.example_title}
-                          </h3>
-                          <p className='mt-1 text-sm text-purple-700'>Ejemplo paso a paso</p>
-                        </div>
-                      </div>
-                      <div className='mt-6 grid gap-4 sm:grid-cols-2'>
-                        {[ lesson.example_1, lesson.example_2, lesson.example_3, lesson.example_4 ].map((example, index) => (
-                            <div
-                              key={index}
-                              className='rounded-xl border border-purple-100 bg-white p-5 shadow-sm'>
-                              <span className='text-sm font-bold text-purple-600'>
-                                Paso{' '}
-                                {index + 1}
-                              </span>
-                              <p className='mt-2 leading-7 text-zinc-700'>
-                                {example}
-                              </p>
+                    {lessonGroups.map((group) => {
+                      if (group.kind === 'paragraph') {
+                        return (
+                          <div key={group.key}>
+                            <p className='text-base leading-8 text-zinc-700 sm:text-lg'>
+                              {group.text}
+                            </p>
+                          </div>
+                        )
+                      }
+
+                      if (group.kind === 'image') {
+                        const imageUrl = getPublicUrl(group.path)
+
+                        if (!imageUrl) {
+                          return null
+                        }
+
+                        return (
+                          <div
+                            key={group.key}
+                            className='overflow-hidden rounded-2xl border border-zinc-100 bg-zinc-50'>
+                            <img
+                              src={imageUrl}
+                              alt={group.alt || `Imagen de ${lesson.title}`}
+                              className='max-h-[600] w-full object-cover'
+                            />
+                          </div>
+                        )
+                      }
+
+                      if (group.kind === 'example') {
+                        return (
+                          <section
+                            key={group.key}
+                            className='rounded-2xl bg-purple-50 p-6 sm:p-8'>
+                            <div className='flex items-start gap-3'>
+                              <div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-purple-100'>
+                                <i className='fi fi-rr-lightbulb-on flex items-center text-purple-600' />
+                              </div>
+                              <div>
+                                <h3 className='text-xl font-bold text-purple-950'>
+                                  {group.title}
+                                </h3>
+                                <p className='mt-1 text-sm text-purple-700'>Ejemplo paso a paso</p>
+                              </div>
                             </div>
-                          )
-                        )}
-                      </div>
-                    </section>
-                    <section>
-                      <div className='flex items-center gap-3'>
-                        <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100'>
-                          <i className='fi fi-rr-pencil flex items-center text-zinc-700' />
-                        </div>
-                        <div>
-                          <h3 className='text-xl font-bold text-zinc-900'>Ejercicios</h3>
-                          <p className='text-sm text-zinc-500'>Pon a prueba lo aprendido.</p>
-                        </div>
-                      </div>
-                      <div className='mt-5 grid gap-4 sm:grid-cols-2'>
-                        <div className='rounded-xl border border-zinc-200 bg-white p-5'>
-                          <span className='text-sm font-bold text-purple-600'>Ejercicio 1</span>
-                          <p className='mt-2 leading-7 text-zinc-700'>
-                            {lesson.exercise_1}
-                          </p>
-                        </div>
-                        <div className='rounded-xl border border-zinc-200 bg-white p-5'>
-                          <span className='text-sm font-bold text-purple-600'>Ejercicio 2</span>
-                          <p className='mt-2 leading-7 text-zinc-700'>
-                            {lesson.exercise_2}
-                          </p>
-                        </div>
-                      </div>
-                    </section>
+                            <div className='mt-6 grid gap-4 sm:grid-cols-2'>
+                              {group.steps.map((example, index) => (
+                                  <div
+                                    key={index}
+                                    className='rounded-xl border border-purple-100 bg-white p-5 shadow-sm'>
+                                    <span className='text-sm font-bold text-purple-600'>
+                                      Paso{' '}
+                                      {index + 1}
+                                    </span>
+                                    <p className='mt-2 leading-7 text-zinc-700'>
+                                      {example}
+                                    </p>
+                                  </div>
+                                )
+                              )}
+                            </div>
+                          </section>
+                        )
+                      }
+
+                      return (
+                        <section key={group.key}>
+                          <div className='flex items-center gap-3'>
+                            <div className='flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-100'>
+                              <i className='fi fi-rr-pencil flex items-center text-zinc-700' />
+                            </div>
+                            <div>
+                              <h3 className='text-xl font-bold text-zinc-900'>Ejercicios</h3>
+                              <p className='text-sm text-zinc-500'>Pon a prueba lo aprendido.</p>
+                            </div>
+                          </div>
+                          <div className='mt-5 grid gap-4 sm:grid-cols-2'>
+                            {group.items.map((item, index) => (
+                              <div
+                                key={item.id}
+                                className='rounded-xl border border-zinc-200 bg-white p-5'>
+                                <span className='text-sm font-bold text-purple-600'>
+                                  Ejercicio {index + 1}
+                                </span>
+                                <p className='mt-2 leading-7 text-zinc-700'>
+                                  {item.text}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        </section>
+                      )
+                    })}
                   </div>
                   <div className='mt-12 flex items-center justify-between border-t border-zinc-100 pt-6'>
                     <button

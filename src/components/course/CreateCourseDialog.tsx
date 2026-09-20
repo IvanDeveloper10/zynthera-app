@@ -36,6 +36,18 @@ interface CreateCourseDialogProps {
   onCourseCreated?: () => void
 };
 
+type BlockType = 'paragraph' | 'image' | 'example' | 'exercise';
+
+interface LessonBlockDraft {
+  position: number
+  type: BlockType
+  content: Record<string, unknown>
+};
+
+interface LessonBlockRow extends LessonBlockDraft {
+  lesson_id: string
+};
+
 const TOTAL_LESSONS = 5;
 
 const createEmptyLesson = (): LessonForm => ({
@@ -60,6 +72,70 @@ const createEmptyCourse = (): CourseForm => ({
   category: '',
   duration: '',
 });
+
+/**
+ * Convierte una lección del formulario en la lista ordenada de bloques
+ * que se guarda en `lesson_blocks`. Si algún día el formulario permite
+ * más párrafos o más ejemplos, solo cambia esta función.
+ */
+const buildLessonBlocks = (
+  lesson: LessonForm,
+  imagePaths: { image1: string, image2: string }
+): LessonBlockDraft[] => {
+  const lessonTitle = lesson.title.trim()
+
+  return [
+    {
+      position: 1,
+      type: 'paragraph',
+      content: { text: lesson.paragraph1.trim() },
+    },
+    {
+      position: 2,
+      type: 'image',
+      content: {
+        path: imagePaths.image1,
+        alt: `Imagen de ${lessonTitle}`,
+      },
+    },
+    {
+      position: 3,
+      type: 'paragraph',
+      content: { text: lesson.paragraph2.trim() },
+    },
+    {
+      position: 4,
+      type: 'image',
+      content: {
+        path: imagePaths.image2,
+        alt: `Imagen complementaria de ${lessonTitle}`,
+      },
+    },
+    {
+      position: 5,
+      type: 'example',
+      content: {
+        title: lesson.exampleTitle.trim(),
+        steps: [
+          lesson.example1.trim(),
+          lesson.example2.trim(),
+          lesson.example3.trim(),
+          lesson.example4.trim(),
+        ],
+      },
+    },
+    {
+      position: 6,
+      type: 'exercise',
+      content: { text: lesson.exercise1.trim() },
+    },
+    {
+      position: 7,
+      type: 'exercise',
+      content: { text: lesson.exercise2.trim() },
+    },
+  ]
+}
 
 export default function CreateCourseDialog({ open, onOpenChange, onCourseCreated }: CreateCourseDialogProps) {
   const { user, profile } = useAuth();
@@ -367,6 +443,10 @@ export default function CreateCourseDialog({ open, onOpenChange, onCourseCreated
     }
   }
 
+  /**
+   * Sube la imagen y devuelve el `path` dentro del bucket.
+   * La URL pública ya no se guarda en la base: se deriva al leer.
+   */
   const uploadImage = async (file: File, path: string) => {
     const { error } = await supabase.storage
       .from('course-images')
@@ -385,13 +465,7 @@ export default function CreateCourseDialog({ open, onOpenChange, onCourseCreated
       throw error
     }
 
-    const { data } = supabase.storage
-      .from('course-images')
-      .getPublicUrl(
-        path
-      )
-
-    return data.publicUrl
+    return path
   }
 
   const createCourse = async () => {
@@ -430,13 +504,34 @@ export default function CreateCourseDialog({ open, onOpenChange, onCourseCreated
     setSaving(true)
 
     let createdCourseId: string | null = null
+    const uploadedPaths: string[] = []
 
     try {
       const courseId = crypto.randomUUID()
       createdCourseId = courseId
-      const courseImagePath = `courses/${user.id}/${courseId}/cover-${crypto.randomUUID()}`
-      const courseImageUrl = await uploadImage(course.image!, courseImagePath)
 
+      // 1. Rutas de todas las imágenes (curso + 2 por lección).
+      const courseImagePath = `courses/${user.id}/${courseId}/cover-${crypto.randomUUID()}`
+      const lessonImagePaths = lessons.map((_, index) => ({
+        image1: `courses/${user.id}/${courseId}/lesson-${index + 1}-image-1-${crypto.randomUUID()}`,
+        image2: `courses/${user.id}/${courseId}/lesson-${index + 1}-image-2-${crypto.randomUUID()}`,
+      }))
+
+      uploadedPaths.push(courseImagePath)
+      lessonImagePaths.forEach((paths) => {
+        uploadedPaths.push(paths.image1, paths.image2)
+      })
+
+      // 2. Subidas en paralelo.
+      await Promise.all([
+        uploadImage(course.image!, courseImagePath),
+        ...lessons.flatMap((lesson, index) => [
+          uploadImage(lesson.image1!, lessonImagePaths[index].image1),
+          uploadImage(lesson.image2!, lessonImagePaths[index].image2),
+        ]),
+      ])
+
+      // 3. Curso.
       const { error: courseError } = await supabase
         .from('courses')
         .insert({
@@ -444,7 +539,6 @@ export default function CreateCourseDialog({ open, onOpenChange, onCourseCreated
           teacher_id: user.id,
           title: course.title.trim(),
           short_description: course.shortDescription.trim(),
-          image_url: courseImageUrl,
           image_path: courseImagePath,
           category: course.category.trim(),
           duration: course.duration.trim(),
@@ -454,38 +548,56 @@ export default function CreateCourseDialog({ open, onOpenChange, onCourseCreated
         throw courseError
       }
 
-      for (let index = 0; index < lessons.length; index++) {
-        const lesson = lessons[index]
-        const lessonNumber = index + 1
-        const image1Path = `courses/${user.id}/${courseId}/lesson-${lessonNumber}-image-1-${crypto.randomUUID()}`
-        const image2Path = `courses/${user.id}/${courseId}/lesson-${lessonNumber}-image-2-${crypto.randomUUID()}`
-        const image1Url = await uploadImage(lesson.image1!, image1Path)
-        const image2Url = await uploadImage(lesson.image2!, image2Path)
-
-        const { error: lessonError} = await supabase
-          .from('lessons')
-          .insert({
+      // 4. Lecciones (solo identidad y título), en un solo insert.
+      const { data: insertedLessons, error: lessonError } = await supabase
+        .from('lessons')
+        .insert(
+          lessons.map((lesson, index) => ({
             course_id: courseId,
-            lesson_number: lessonNumber,
+            lesson_number: index + 1,
             title: lesson.title.trim(),
-            paragraph_1: lesson.paragraph1.trim(),
-            image_1_url: image1Url,
-            image_1_path: image1Path,
-            paragraph_2: lesson.paragraph2.trim(),
-            image_2_url: image2Url,
-            image_2_path: image2Path,
-            example_title: lesson.exampleTitle.trim(),
-            example_1: lesson.example1.trim(),
-            example_2: lesson.example2.trim(),
-            example_3: lesson.example3.trim(),
-            example_4: lesson.example4.trim(),
-            exercise_1: lesson.exercise1.trim(),
-            exercise_2: lesson.exercise2.trim(),
-          })
+          }))
+        )
+        .select('id, lesson_number')
 
-        if (lessonError) {
-          throw lessonError
+      if (lessonError) {
+        throw lessonError
+      }
+
+      if (!insertedLessons || insertedLessons.length !== lessons.length) {
+        throw new Error('No se guardaron todas las lecciones.')
+      }
+
+      const lessonIdByNumber = new Map<number, string>(
+        insertedLessons.map((item) => [
+          item.lesson_number as number,
+          item.id as string,
+        ])
+      )
+
+      // 5. Bloques de contenido, también en un solo insert.
+      const blockRows: LessonBlockRow[] = lessons.flatMap((lesson, index) => {
+        const lessonId = lessonIdByNumber.get(index + 1)
+
+        if (!lessonId) {
+          throw new Error(`No se encontró la lección ${index + 1}.`)
         }
+
+        return buildLessonBlocks(
+          lesson,
+          lessonImagePaths[index]
+        ).map((block) => ({
+          lesson_id: lessonId,
+          ...block,
+        }))
+      })
+
+      const { error: blockError } = await supabase
+        .from('lesson_blocks')
+        .insert(blockRows)
+
+      if (blockError) {
+        throw blockError
       }
 
       toast.add({
@@ -499,11 +611,19 @@ export default function CreateCourseDialog({ open, onOpenChange, onCourseCreated
     } catch (error) {
       console.error('Error creando curso:', error)
 
+      // Al borrar el curso, `on delete cascade` se lleva lecciones y bloques.
       if (createdCourseId) {
         await supabase
           .from('courses')
           .delete()
           .eq('id', createdCourseId)
+      }
+
+      // Las imágenes no van en cascada: se limpian a mano.
+      if (uploadedPaths.length > 0) {
+        await supabase.storage
+          .from('course-images')
+          .remove(uploadedPaths)
       }
 
       toast.add({
